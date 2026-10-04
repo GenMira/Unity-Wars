@@ -1,0 +1,52 @@
+# =========================================================================
+# Unity generated
+# =========================================================================
+/[L|l]ibrary/
+/[T|t]emp/
+/[O|o]bj/
+/[B|b]uild/
+/[B|b]uilds/
+/[L|l]ogs/
+/[U|u]ser[S|s]ettings/
+/[M|m]emoryCaptures/
+
+# =========================================================================
+# Asset store packages / Addressables
+# =========================================================================
+/[A|a]ssets/AssetStoreTools*
+/[A|a]ssets/AddressableAssetsData/AddressableAssetSettings.local.json
+/[A|a]ssets/StreamingAssets/aa/*
+
+# =========================================================================
+# Visual Studio / Visual Studio Code / Rider
+# =========================================================================
+.vs/
+.idea/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.opendb
+*.VC.db
+
+# =========================================================================
+# OS generated
+# =========================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =========================================================================
+# Git LFS (Large File Storage)
+# 大容量バイナリは.gitignoreで除外する代わりに.gitattributesでLFS管理すること
+# =========================================================================
