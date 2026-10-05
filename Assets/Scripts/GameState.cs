@@ -14,7 +14,7 @@ public class GameState
     }
     public struct BoardState
     {
-        HexMap hexMap;
+        //HexMap hexMap;
         UnitState[] unitStates;
         FacilityState[] facilityStates;
     }
@@ -25,7 +25,13 @@ public class GameState
         Vector2 position;
         int health;
         bool isTurnEnded;
-        UnitState mounted;
+        MountedUnit mountedUnit;
+    }
+
+    public struct MountedUnit
+    {
+        string unitId;
+        int health;
     }
 
     public struct FacilityState
