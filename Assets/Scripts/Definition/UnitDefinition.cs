@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Unity Wars/Unit Definition")]
-public class UnitDefinition : ScriptableObject
+[CreateAssetMenu(menuName = "Unity Wars/Troop Definition")]
+public class TroopDefinition : ScriptableObject
 {
     [SerializeField] private Unit id;
     [SerializeField] private string displayName;

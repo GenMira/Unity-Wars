@@ -9,36 +9,6 @@ using System.Collections;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Linq;
 
-public enum PlayerSide
-{
-    Red,
-    Blue
-}
-
-public enum WarState
-{
-    Prepareing,
-    Playing,
-    Finished
-}
-
-public enum TurnPhase
-{
-    Starting,
-    Acting,
-    Ending
-}
-
-public enum Unit
-{
-    solider,
-    artillery,
-    armoredCar,
-    selfPropelledGun,
-    lightTank,
-    heavyTank
-}
-
 public class GameState
 {
     public WarState WarState{get; private set;}
@@ -272,29 +242,29 @@ public class BoardState
 
 }
 
-public class UnitState
+public class TroopState
 {
     public string Id{get;private set;}
     public Vector3Int Position{get;private set;}
-    public UnitDefinition Definition { get; }
+    public TroopDefinition Definition { get; }
 
     public int Health{get;private set;}
     public int MovementRange{get;private set;}
     public PlayerSide Owner{get;private set;}
     public bool IsAlreadyMoved{get;private set;}
-    public List<UnitState> MountedUnit{get;private set;}
+    public List<TroopState> MountedUnit{get;private set;}
 
 
-    public UnitState(
-        string unitId,
-        UnitDefinition definition,
+    public TroopState(
+        string troopId,
+        TroopDefinition definition,
         PlayerSide owner,
         Vector3Int position)
     {
         if (definition == null)
             throw new System.ArgumentNullException(nameof(definition));
 
-        Id = unitId;
+        Id = troopId;
         Definition = definition;
         Owner = owner;
         Position = position;
