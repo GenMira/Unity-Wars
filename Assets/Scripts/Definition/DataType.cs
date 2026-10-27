@@ -18,7 +18,7 @@ public enum TurnPhase
     Ending
 }
 
-public enum Unit
+public enum TroopType
 {
     solider,
     artillery,
@@ -28,7 +28,7 @@ public enum Unit
     heavyTank
 }
 
-public enum Facility
+public enum FacilityType
 {
     headquarters,
     factory,
