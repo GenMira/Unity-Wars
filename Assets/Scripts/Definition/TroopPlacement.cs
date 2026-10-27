@@ -10,6 +10,11 @@ public abstract class TroopPlacement
         {
             Position = position;
         }
+
+        public override string ToString()
+        {
+            return Position.ToString();
+        }
     }
 
     public sealed class Embarked : TroopPlacement
@@ -19,6 +24,11 @@ public abstract class TroopPlacement
         public Embarked(string carrierId)
         {
             CarrierId = carrierId;
+        }
+
+        public override string ToString()
+        {
+            return CarrierId;
         }
     }
 }

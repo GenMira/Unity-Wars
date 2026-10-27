@@ -8,13 +8,13 @@ public class Troop : ITroop
 
     public int MaxHealth{get;private set;}
     public int MaxMovementRange{get;private set;}
-    public int Cost{get;private set;}
     public TroopType[] MountableType{get;private set;}
     public int MountableAmount{get;private set;}
     
     protected readonly ReactiveProperty<int> _currentHealth;
     public ReadOnlyReactiveProperty<int>  CurrentHealth => _currentHealth;
-    public int CurrentMovementRange{get;protected set;}
+    protected readonly ReactiveProperty<int> _currentMovementRange;
+    public ReadOnlyReactiveProperty<int>  CurrentMovementRange =>_currentMovementRange;
     public bool IsAlreadyMoved{get;protected set;}
 
 
@@ -23,7 +23,6 @@ public class Troop : ITroop
         PlayerSide owner,
         int maxHealth,
         int movementRange,
-        int cost,
         TroopType[] mountableType = null,
         int mountableAmount = 0)
     {
@@ -33,26 +32,15 @@ public class Troop : ITroop
         MaxHealth = maxHealth;
         _currentHealth = new ReactiveProperty<int>(maxHealth);
         MaxMovementRange = movementRange;
-        CurrentMovementRange = movementRange;
-        Cost = cost;
+        _currentMovementRange = new ReactiveProperty<int>(MaxMovementRange);
         MountableType = mountableType ?? System.Array.Empty<TroopType>();
         MountableAmount = mountableAmount;
     }
 
     public void Reset()
     {
-        CurrentMovementRange = MaxMovementRange;
+        _currentMovementRange.Value = MaxMovementRange;
         IsAlreadyMoved = false;   
-    }
-
-    public bool CheckMovability()
-    {
-        if (CurrentMovementRange >= 0)
-        {
-            CurrentMovementRange -=1;
-            return true;
-        }
-        return false;
     }
 
     public virtual int Attack(int type)

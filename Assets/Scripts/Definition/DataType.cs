@@ -35,3 +35,11 @@ public enum FacilityType
     airfield,
     port
 }
+
+public enum AreaType
+{
+    field,
+    forest,
+    mountain,
+    sea
+}

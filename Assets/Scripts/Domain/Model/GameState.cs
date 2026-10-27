@@ -55,11 +55,6 @@ public class GameState
         BoardState.DismountTroop(mountUnit, direction);
     }
 
-    public void AddTroop(TroopType type,PlayerSide player,HexPosition pos)
-    {
-        Troop troop = TroopFactory.CreateTroop(type,player);
-        BoardState.AddTroop(troop,pos);
-    }
 
     public void ChangePhase()
     {

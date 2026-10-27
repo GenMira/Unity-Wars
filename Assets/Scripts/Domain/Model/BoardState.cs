@@ -1,16 +1,20 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class BoardState
 {
     readonly Dictionary<string, IFacility> facilities;
-    readonly Dictionary<string, Troop> troops = new();
-    readonly Dictionary<string, TroopPlacement> placements = new();
+    readonly Dictionary<string, Troop> troops;
+    readonly Dictionary<string, TroopPlacement> placements;
+
+    readonly Dictionary<string,AreaType> battleField;
 
     public BoardState()
     {
         facilities = new Dictionary<string, IFacility>();
+        battleField = new Dictionary<string, AreaType>();
         troops = new Dictionary<string, Troop>();
         placements = new Dictionary<string, TroopPlacement>();
     }
@@ -42,35 +46,15 @@ public class BoardState
 
     }
 
-    public void RemoveTroop(Troop troop)
-    {
-        troops.Remove(troop.Id);
-        placements.Remove(troop.Id);
-    }
-
     public HexPosition MoveTroop(Troop troop, HexPosition direction)
     {
-        if(direction.normalized() == false)
-        {
-            throw new InvalidOperationException(
-                $"移動方向は正規化されていません: {direction.q},{direction.r}");
-        }
-
         if (placements.TryGetValue(troop.Id, out TroopPlacement placement))
         {
             if (placement is TroopPlacement.OnBoard onBoard)
             {
-                if (troop.CheckMovability())
-                {
-                    placements[troop.Id] = new TroopPlacement.OnBoard(onBoard.Position + direction);
-                    // UnitUpdated?.Invoke();
-                    return onBoard.Position + direction;
-                }
-                else
-                {
-                    throw new InvalidOperationException(
-                        $"これ以上部隊は移動できません: {troop.Id}");
-                }
+                placements[troop.Id] = new TroopPlacement.OnBoard(onBoard.Position + direction);
+                // UnitUpdated?.Invoke();
+                return onBoard.Position + direction;
 
             }
             else
@@ -138,8 +122,50 @@ public class BoardState
                     $"搭乗中の部隊は位置を取得できません: {troopId}");
             }
         }
+        else
+        {
+            throw new InvalidOperationException(
+                $"部隊が見つかりません: {troopId}");            
+        }
+    }
+
+    public void LostTroop(string troopId)
+    {
+        if (placements.TryGetValue(troopId, out TroopPlacement placement))
+        {
+            foreach(string embarkedTroopId in GetEmbarked(troopId))
+            {
+                troops.Remove(embarkedTroopId);
+                placements.Remove(embarkedTroopId);
+            }
+            troops.Remove(troopId);
+            placements.Remove(troopId);
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                $"部隊が見つかりません: {troopId}");            
+        }
+
+    }
+
+    public List<String> GetEmbarked(string troopId)
+    {
+        if (placements.TryGetValue(troopId, out TroopPlacement placement))
+        {
+            return placements.Where(x=>x.Value.ToString() == troopId)
+            .Select(x => x.Key)
+            .ToList();
+        }
         throw new InvalidOperationException(
             $"部隊が見つかりません: {troopId}");
+    }
+
+    public bool IsTroopAlreadyExist(HexPosition pos)
+    {
+        return placements.Values.Any(placement => 
+        placement is TroopPlacement.OnBoard onBoard 
+        && onBoard.Position.Equals(pos));
     }
 
 }

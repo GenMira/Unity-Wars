@@ -1,13 +1,20 @@
+using System.Collections;
+
 public class TroopFactory
 {
-    public static Troop CreateTroop(TroopType type, PlayerSide owner)
+    public Troop CreateTroop(TroopType type, PlayerSide owner) => type switch
     {
-        switch(type)
-        {
-            case TroopType.solider:
-                return new Solider(owner);
-            default:
-                throw new System.Exception($"Unknown troop type: {type}");
-        }
-    }
+        TroopType.solider => new Solider(owner),
+    };
+
 }
+
+// public enum TroopType
+// {
+//     solider,
+//     artillery,
+//     armoredCar,
+//     selfPropelledGun,
+//     lightTank,
+//     heavyTank
+// }

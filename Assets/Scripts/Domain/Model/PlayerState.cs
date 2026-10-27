@@ -18,16 +18,24 @@ public class PlayerState
         Money = Money + amount;
     }
 
-    public bool SpendMoney(int amount)
+    public void SpendMoney(int amount)
+    {
+        if (amount < 0)
+            throw new ArgumentOutOfRangeException(nameof(amount));
+
+        if (Money < amount)
+            throw new ArgumentOutOfRangeException(nameof(amount));
+        
+        Money -=amount;        
+    }
+
+    public bool SpendableMoney(int amount)
     {
         if (amount < 0)
             throw new ArgumentOutOfRangeException(nameof(amount));
 
         if (Money < amount)
             return false;
-        
-        Money -=amount;
         return true;
-        
     }
 }

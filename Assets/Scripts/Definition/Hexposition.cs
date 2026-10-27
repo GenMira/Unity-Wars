@@ -14,6 +14,10 @@ public struct HexPosition
     {
         return new HexPosition(a.q + b.q, a.r + b.r);
     }
+    public static HexPosition operator -(HexPosition a, HexPosition b)
+    {
+        return new HexPosition(a.q - b.q, a.r - b.r);
+    }
 
     public int abs()
     {
@@ -22,5 +26,10 @@ public struct HexPosition
     public bool normalized()
     {
         return this.abs() == 1;
+    }
+
+    public override string ToString()
+    {
+        return $"({q},{r})";
     }
 }

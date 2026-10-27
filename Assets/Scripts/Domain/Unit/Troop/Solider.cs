@@ -16,7 +16,7 @@ public class Solider : Troop
     };
 
     public Solider(PlayerSide owner)
-        : base(TroopType.solider, owner, 100, 2, 500)
+        : base(TroopType.solider, owner, 100, 2)
     {
     }
 
