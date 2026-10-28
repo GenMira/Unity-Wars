@@ -21,6 +21,7 @@ public enum TurnPhase
 public enum TroopType
 {
     solider,
+    ranger,
     artillery,
     armoredCar,
     selfPropelledGun,
@@ -33,7 +34,8 @@ public enum FacilityType
     headquarters,
     factory,
     airfield,
-    port
+    port,
+    city
 }
 
 public enum AreaType

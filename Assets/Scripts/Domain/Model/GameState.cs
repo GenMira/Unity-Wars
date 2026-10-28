@@ -1,13 +1,4 @@
-using UnityEngine;
 using System;
-using UnityEditor.U2D.Aseprite;
-using Unity.Mathematics;
-using UnityEngine.Tilemaps;
-using Unity.VisualScripting;
-using System.Collections.Generic;
-using System.Collections;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Linq;
 
 public class GameState
 {
@@ -17,13 +8,19 @@ public class GameState
     public PlayerState BlueState{get; private set;}
     public BoardState BoardState{get; private set;}
 
-    public GameState()
+    public GameState(BoardState boardState, int redInitialMoney = 0, int blueInitialMoney = 0)
     {
+        if (boardState == null) throw new ArgumentNullException(nameof(boardState));
+        if (redInitialMoney < 0) throw new ArgumentOutOfRangeException(nameof(redInitialMoney));
+        if (blueInitialMoney < 0) throw new ArgumentOutOfRangeException(nameof(blueInitialMoney));
+
         WarState = WarState.Prepareing;
         TurnState = new TurnState();
         RedState = new PlayerState(PlayerSide.Red);
         BlueState = new PlayerState(PlayerSide.Blue);
-        BoardState = new BoardState();
+        RedState.AddMoney(redInitialMoney);
+        BlueState.AddMoney(blueInitialMoney);
+        BoardState = boardState;
     }
 
     public void ChangeWarState()

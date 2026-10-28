@@ -15,6 +15,31 @@ public static class Data
             AreaType.field,
             AreaType.forest,
             AreaType.mountain},
+        TroopType.artillery => new AreaType[]{
+            AreaType.field,
+            AreaType.forest,
+        },
+        TroopType.armoredCar => new AreaType[]{
+            AreaType.field,
+            AreaType.forest},
+        TroopType.heavyTank => new AreaType[]{
+            AreaType.field,
+        },
+        TroopType.lightTank => new AreaType[]{
+            AreaType.field,
+        },
+        TroopType.selfPropelledGun => new AreaType[]
+        {
+            AreaType.field,
+            AreaType.forest,
+        },
+        TroopType.ranger => new AreaType[]
+        {
+            AreaType.field,
+            AreaType.forest,
+            AreaType.mountain,
+        }
+
     };
 
 }

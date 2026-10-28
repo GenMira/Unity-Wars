@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-public struct HexPosition
+
+public readonly struct HexPosition : IEquatable<HexPosition>
 {
-    public int q;
-    public int r;
+    public readonly int q;
+    public readonly int r;
 
     public HexPosition(int q, int r)
     {
@@ -12,49 +13,22 @@ public struct HexPosition
     }
 
     public static HexPosition operator +(HexPosition a, HexPosition b)
-    {
-        return new HexPosition(a.q + b.q, a.r + b.r);
-    }
+        => new HexPosition(a.q + b.q, a.r + b.r);
     public static HexPosition operator -(HexPosition a, HexPosition b)
-    {
-        return new HexPosition(a.q - b.q, a.r - b.r);
-    }
+        => new HexPosition(a.q - b.q, a.r - b.r);
+    public static bool operator ==(HexPosition a, HexPosition b) => a.Equals(b);
+    public static bool operator !=(HexPosition a, HexPosition b) => !a.Equals(b);
+    public bool Equals(HexPosition other) => q == other.q && r == other.r;
+    public override bool Equals(object obj) => obj is HexPosition other && Equals(other);
+    public override int GetHashCode() => unchecked((q * 397) ^ r);
+    public int abs() => (Math.Abs(q) + Math.Abs(r) + Math.Abs(q + r)) / 2;
+    public bool normalized() => abs() == 1;
+    public override string ToString() => $"({q},{r})";
 
-    public int abs()
+    public List<HexPosition> GetAdjacent() => new List<HexPosition>
     {
-        return (Math.Abs(this.q) + Math.Abs(this.r) + Math.Abs(this.q + this.r)) / 2;
-    }
-    public bool normalized()
-    {
-        return this.abs() == 1;
-    }
-
-    public override string ToString()
-    {
-        return $"({q},{r})";
-    }
-    public List<HexPosition> GetAdjacent()
-    {
-        List<HexPosition> adjacent = new();
-        for(int i = -1; i < 2; i++)
-        {
-            for(int j = -1;j < 2; j++)
-            {
-                HexPosition d = new HexPosition
-                {
-                    q=i,
-                    r=j
-                };
-
-                if ((d - this).abs() == 1)
-                {
-                    adjacent.Add(d+this);
-                }
-
-                
-            }
-        }
-
-        return adjacent;
-    }
+        this + new HexPosition(1, 0), this + new HexPosition(0, 1),
+        this + new HexPosition(-1, 1), this + new HexPosition(-1, 0),
+        this + new HexPosition(0, -1), this + new HexPosition(1, -1)
+    };
 }

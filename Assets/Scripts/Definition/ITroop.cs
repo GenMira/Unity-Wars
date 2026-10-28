@@ -1,4 +1,3 @@
-using UnityEngine;
 using R3;
 
 public interface ITroop

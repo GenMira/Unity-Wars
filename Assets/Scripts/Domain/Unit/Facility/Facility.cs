@@ -7,7 +7,8 @@ public class Facility : IFacility
     public FacilityType Type{get;private set;}
     public HexPosition Position{get;private set;}
     public int MaxDurability{get;private set;}
-    public PlayerSide Owner{get;private set;}
+    // nullは中立施設を表す。部隊の所有陣営には中立を追加しない。
+    public PlayerSide? Owner{get;private set;}
 
     public ReadOnlyReactiveProperty<int> CurrentDurability => _currentDurability;
     private readonly ReactiveProperty<int> _currentDurability;
@@ -16,7 +17,7 @@ public class Facility : IFacility
         FacilityType type,
         HexPosition position,
         int durability,
-        PlayerSide owner
+        PlayerSide? owner
     )
     {
         Type = type;

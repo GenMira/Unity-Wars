@@ -10,7 +10,6 @@ public class TurnService
     public void StartGame()
     {
         game.BoardState.Reset();
-        NameSolver.Reset();
         
     }
 

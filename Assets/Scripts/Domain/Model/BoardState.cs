@@ -1,8 +1,6 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Collections;
 using R3;
 
 public class BoardState
@@ -11,16 +9,25 @@ public class BoardState
     readonly Dictionary<string, Troop> troops;
     readonly Dictionary<string, TroopPlacement> placements;
 
-    readonly Dictionary<HexPosition,AreaType> battleField;
+    readonly BattleField battleField;
+    public IReadOnlyDictionary<HexPosition, AreaType> Terrain => battleField.Cells;
+    public IReadOnlyDictionary<string, Facility> Facilities { get; }
     readonly Subject<string> troopLosted = new();
 
     public BoardState(
         Dictionary<HexPosition,AreaType> battlefield,
         Dictionary<string, Facility> facilities
-    )
+    ) : this(new BattleField(battlefield), facilities) { }
+
+    public BoardState(BattleField battlefield, IDictionary<string, Facility> facilities)
     {
-        this.facilities = facilities;
-        this.battleField = battlefield;
+        this.battleField = battlefield ?? throw new ArgumentNullException(nameof(battlefield));
+        if (facilities == null){
+            throw new ArgumentNullException(nameof(facilities));
+        }
+        
+        this.facilities = new Dictionary<string, Facility>(facilities);
+        Facilities = new System.Collections.ObjectModel.ReadOnlyDictionary<string, Facility>(this.facilities);
         troops = new Dictionary<string, Troop>();
         placements = new Dictionary<string, TroopPlacement>();
     }
@@ -28,6 +35,9 @@ public class BoardState
     // admin troop
     public void AddTroop(Troop troop, HexPosition position)
     {
+        if (troop == null) throw new ArgumentNullException(nameof(troop));
+        if (!battleField.Contains(position))
+            throw new InvalidOperationException($"盤面外には部隊を配置できません: {position}");
         if (troops.ContainsKey(troop.Id) ||
             placements.ContainsKey(troop.Id))
         {
@@ -237,8 +247,13 @@ public class BoardState
 
     public Dictionary<HexPosition,AreaType> GetAreatypes(List<HexPosition> positions)
     {
-        return battleField
+        return battleField.Cells
             .Where(x => positions.Contains(x.Key))
             .ToDictionary(x => x.Key, x => x.Value);
     }
+
+    public bool ContainsPosition(HexPosition position) => battleField.Contains(position);
+
+    public bool TryGetAreaType(HexPosition position, out AreaType areaType)
+        => battleField.TryGetAreaType(position, out areaType);
 }
