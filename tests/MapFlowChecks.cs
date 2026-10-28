@@ -9,7 +9,6 @@ public static class MapFlowChecks
         => new KeyValuePair<HexPosition, AreaType>(new HexPosition(q, r), type);
     static BattleField Terrain() => new BattleField(new[] { Cell(0, 0), Cell(1, 0), Cell(0, 1, AreaType.forest) });
     static MapDefinition Map(string id = "test") => new MapDefinition(id, id, Terrain(),
-        new[] { new InitialTroopDefinition(TroopType.solider, PlayerSide.Red, new HexPosition(0, 0)) },
         new[] { new InitialFacilityDefinition(FacilityType.city, null, new HexPosition(1, 0), 200) }, 500, 1000);
     static void Require(bool condition) { if (!condition) throw new Exception("Assertion failed"); }
     static void Throws<T>(Action action) where T : Exception
@@ -46,26 +45,24 @@ public static class MapFlowChecks
             Throws<ArgumentException>(() => new BattleField(new[] { Cell(0, 0, (AreaType)99) }));
         });
         Check("map rejects missing identity and negative funds", () => {
-            Throws<ArgumentException>(() => new MapDefinition("", "test", Terrain(), Array.Empty<InitialTroopDefinition>(), Array.Empty<InitialFacilityDefinition>()));
-            Throws<ArgumentOutOfRangeException>(() => new MapDefinition("test", "test", Terrain(), Array.Empty<InitialTroopDefinition>(), Array.Empty<InitialFacilityDefinition>(), -1));
+            Throws<ArgumentException>(() => new MapDefinition("", "test", Terrain(), Array.Empty<InitialFacilityDefinition>()));
+            Throws<ArgumentOutOfRangeException>(() => new MapDefinition("test", "test", Terrain(), Array.Empty<InitialFacilityDefinition>(), -1));
         });
-        Check("map copies initial placement arrays", () => {
-            var source = new[] { new InitialTroopDefinition(TroopType.solider, PlayerSide.Red, new HexPosition(0, 0)) };
-            var map = new MapDefinition("copy", "copy", Terrain(), source, Array.Empty<InitialFacilityDefinition>());
+        Check("map copies initial facility arrays", () => {
+            var source = new[] { new InitialFacilityDefinition(FacilityType.city, null, new HexPosition(0, 0), 200) };
+            var map = new MapDefinition("copy", "copy", Terrain(), source);
             source[0] = null;
-            Require(map.InitialTroops[0] != null);
+            Require(map.InitialFacilities[0] != null);
         });
-        Check("duplicate and outside initial troops rejected", () => {
-            var troop = Map().InitialTroops[0];
-            Throws<ArgumentException>(() => new MapDefinition("dup", "dup", Terrain(), new[] { troop, troop }, Array.Empty<InitialFacilityDefinition>()));
+        Check("outside initial facilities rejected", () => {
             Throws<ArgumentException>(() => new MapDefinition("outside", "outside", Terrain(), new[] {
-                new InitialTroopDefinition(TroopType.solider, PlayerSide.Red, new HexPosition(9, 9))
-            }, Array.Empty<InitialFacilityDefinition>()));
+                new InitialFacilityDefinition(FacilityType.city, null, new HexPosition(9, 9), 200)
+            }));
         });
         Check("facilities need valid distinct land positions", () => {
             var facility = Map().InitialFacilities[0];
-            Throws<ArgumentException>(() => new MapDefinition("dup", "dup", Terrain(), Array.Empty<InitialTroopDefinition>(), new[] { facility, facility }));
-            Throws<ArgumentException>(() => new MapDefinition("forest", "forest", Terrain(), Array.Empty<InitialTroopDefinition>(), new[] {
+            Throws<ArgumentException>(() => new MapDefinition("dup", "dup", Terrain(), new[] { facility, facility }));
+            Throws<ArgumentException>(() => new MapDefinition("forest", "forest", Terrain(), new[] {
                 new InitialFacilityDefinition(FacilityType.city, null, new HexPosition(0, 1), 200)
             }));
         });
@@ -90,6 +87,8 @@ public static class MapFlowChecks
             Require(first.RedState.Money == 500 && first.BlueState.Money == 1000);
             Require(first.BoardState.ContainsPosition(new HexPosition(0, 1)));
             Require(!first.BoardState.ContainsPosition(new HexPosition(3, 3)));
+            first.BoardState.AddTroop(new Solider(PlayerSide.Red), new HexPosition(0, 0));
+            second.BoardState.AddTroop(new Solider(PlayerSide.Red), new HexPosition(0, 0));
             var troop = first.BoardState.GetOnBoardTroops().Single();
             troop.RecieveDamage(30);
             first.RedState.SpendMoney(100);
@@ -102,7 +101,7 @@ public static class MapFlowChecks
         });
         Check("selecting another map changes next match", () => {
             var other = new MapDefinition("other", "other", new BattleField(new[] { Cell(7, 4) }),
-                Array.Empty<InitialTroopDefinition>(), Array.Empty<InitialFacilityDefinition>());
+                Array.Empty<InitialFacilityDefinition>());
             var catalog = new MapCatalog(new[] { Map(), other });
             var selection = new MapSelection();
             var select = new SelectMapUseCase(catalog, selection);
@@ -113,15 +112,14 @@ public static class MapFlowChecks
             Require(create.Execute().BoardState.ContainsPosition(new HexPosition(7, 4)));
             Require(!create.Execute().BoardState.ContainsPosition(new HexPosition(0, 0)));
         });
-        Check("unsupported initial unit and impassable terrain rejected", () => {
-            var factory = new GameFactory(new TroopFactory());
-            Throws<InvalidOperationException>(() => factory.Create(new MapDefinition("unsupported", "unsupported", Terrain(),
-                new[] { new InitialTroopDefinition(TroopType.lightTank, PlayerSide.Red, new HexPosition(0, 0)) }, Array.Empty<InitialFacilityDefinition>())));
-            Throws<InvalidOperationException>(() => factory.Create(new MapDefinition("sea", "sea", new BattleField(new[] { Cell(0, 0, AreaType.sea) }),
-                new[] { new InitialTroopDefinition(TroopType.solider, PlayerSide.Red, new HexPosition(0, 0)) }, Array.Empty<InitialFacilityDefinition>())));
+        Check("sea is valid terrain without a land facility", () => {
+            var map = new MapDefinition("sea", "sea", new BattleField(new[] { Cell(0, 0, AreaType.sea) }),
+                Array.Empty<InitialFacilityDefinition>());
+            Require(new GameFactory(new TroopFactory()).Create(map).BoardState.ContainsPosition(new HexPosition(0, 0)));
         });
         Check("starting a match preserves initial ids for later production", () => {
             var game = new GameFactory(new TroopFactory()).Create(Map());
+            game.BoardState.AddTroop(new Solider(PlayerSide.Red), new HexPosition(0, 0));
             new TurnService(game).StartGame();
             game.BoardState.AddTroop(new Solider(PlayerSide.Red), new HexPosition(0, 1));
             Require(game.BoardState.GetOnBoardTroops().Count == 2);
@@ -129,7 +127,7 @@ public static class MapFlowChecks
         Check("board refuses outside placement", () => {
             var game = new GameFactory(new TroopFactory()).Create(Map());
             Throws<InvalidOperationException>(() => game.BoardState.AddTroop(new Solider(PlayerSide.Red), new HexPosition(99, 99)));
-            Require(game.BoardState.GetOnBoardTroops().Count == 1);
+            Require(game.BoardState.GetOnBoardTroops().Count == 0);
         });
         Console.WriteLine($"{passed} map flow checks passed.");
     }

@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fde31738c2bd4e35ba3c5f4f9e46f467, type: 3}
+  m_Name: DefaultMapTileCatalog
+  m_EditorClassIdentifier: 
+  rules:
+  - tile: {fileID: 11400000, guid: 349330f83a9585a4b9e5554f1a79810d, type: 2}
+    terrain: 0
+    hasFacility: 0
+    facilityType: 0
+    maxDurability: 200
+    isNeutral: 1
+    owner: 0
+  - tile: {fileID: 11400000, guid: 69dc2dc034f37b64ca81519598b54d05, type: 2}
+    terrain: 0
+    hasFacility: 1
+    facilityType: 4
+    maxDurability: 200
+    isNeutral: 1
+    owner: 0
+  - tile: {fileID: 11400000, guid: a319a816f863f2343b6e60434507a361, type: 2}
+    terrain: 0
+    hasFacility: 1
+    facilityType: 1
+    maxDurability: 300
+    isNeutral: 1
+    owner: 0
