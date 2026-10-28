@@ -22,11 +22,12 @@ public class TurnState{
                 break;
             case TurnPhase.Ending:
                 Phase = TurnPhase.Starting;
+                ChangeTurn();
                 break;
         }
     }
 
-    public void ChangeTurn()
+    private void ChangeTurn()
     {
         Turn+=1;
 

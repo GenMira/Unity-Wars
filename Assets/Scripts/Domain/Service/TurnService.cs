@@ -14,18 +14,12 @@ public class TurnService
         
     }
 
-    public void ChangeTurn()
-    {
-        game.TurnState.ChangeTurn();
-        game.BoardState.Reset();
-    }
 
     public void ChangePhase()
     {
         game.TurnState.ChangePhase();
         if(game.TurnState.Phase == TurnPhase.Starting)
         {
-            game.TurnState.ChangeTurn();
             game.BoardState.Reset();
         }
     }

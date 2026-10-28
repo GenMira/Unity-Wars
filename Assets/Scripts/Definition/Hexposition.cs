@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 public struct HexPosition
 {
     public int q;
@@ -31,5 +32,29 @@ public struct HexPosition
     public override string ToString()
     {
         return $"({q},{r})";
+    }
+    public List<HexPosition> GetAdjacent()
+    {
+        List<HexPosition> adjacent = new();
+        for(int i = -1; i < 2; i++)
+        {
+            for(int j = -1;j < 2; j++)
+            {
+                HexPosition d = new HexPosition
+                {
+                    q=i,
+                    r=j
+                };
+
+                if ((d - this).abs() == 1)
+                {
+                    adjacent.Add(d+this);
+                }
+
+                
+            }
+        }
+
+        return adjacent;
     }
 }

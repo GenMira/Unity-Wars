@@ -40,34 +40,5 @@ public class GameState
     }
 
 
-    public void MountTroop(string troopId,string viecleId)
-    {
-        Troop mountUnit = BoardState.GetTroopById(troopId);
-        Troop viecleUnit = BoardState.GetTroopById(viecleId);
-
-        BoardState.MountTroop(mountUnit, viecleUnit);
-    }
-
-    public void DismountTroop(string troopId,HexPosition direction)
-    {
-        Troop mountUnit = BoardState.GetTroopById(troopId);
-
-        BoardState.DismountTroop(mountUnit, direction);
-    }
-
-
-    public void ChangePhase()
-    {
-        TurnState.ChangePhase();
-        if(TurnState.Phase == TurnPhase.Starting)
-        {
-            TurnState.ChangeTurn();
-            BoardState.Reset();
-        }
-    }
-
-
-
-
 }
 

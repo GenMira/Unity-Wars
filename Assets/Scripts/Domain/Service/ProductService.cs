@@ -18,19 +18,18 @@ public class ProductService
     {
         PlayerState producer = player == PlayerSide.Red ? game.RedState:game.BlueState;
         int troopPrice = Data.GetTroopPrice(type);
-        if(producer.SpendableMoney(troopPrice) && !game.BoardState.IsTroopAlreadyExist(position))
-        try
-        {
+
+        if(producer.SpendableMoney(troopPrice) && !game.BoardState.IsTroopAlreadyExist(position)){
+
+            Troop newTroop = troopFactory.CreateTroop(type,player);
+            game.BoardState.AddTroop(newTroop,position);
+            newTroop.DoneMove();
             producer.SpendMoney(Data.GetTroopPrice(type));
         }
-        catch(ArgumentOutOfRangeException ex)
+        else
         {
-            Debug.Log(ex.Message);
-            return;
+            throw new InvalidOperationException();
         }
-
-        Troop newTroop = troopFactory.CreateTroop(type,player);
-        game.BoardState.AddTroop(newTroop,position);
         
     }
 

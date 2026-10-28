@@ -11,7 +11,6 @@ public interface ITroop
     ReadOnlyReactiveProperty<int>  CurrentHealth{get;}
 
     int MaxMovementRange{get;}
-    ReadOnlyReactiveProperty<int>  CurrentMovementRange{get;}
     TroopType[] MountableType{get;}
     int MountableAmount{get;}
     bool IsAlreadyMoved{get;}
@@ -19,6 +18,6 @@ public interface ITroop
     void Reset();
     int Attack(int type);
     int GetAttackRange(int type);
-    void recieveDamage(int damage);
+    void RecieveDamage(int damage);
 
 }

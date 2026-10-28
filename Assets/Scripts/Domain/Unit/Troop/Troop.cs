@@ -1,4 +1,5 @@
 using R3;
+using System;
 
 public class Troop : ITroop
 {
@@ -13,8 +14,6 @@ public class Troop : ITroop
     
     protected readonly ReactiveProperty<int> _currentHealth;
     public ReadOnlyReactiveProperty<int>  CurrentHealth => _currentHealth;
-    protected readonly ReactiveProperty<int> _currentMovementRange;
-    public ReadOnlyReactiveProperty<int>  CurrentMovementRange =>_currentMovementRange;
     public bool IsAlreadyMoved{get;protected set;}
 
 
@@ -32,14 +31,12 @@ public class Troop : ITroop
         MaxHealth = maxHealth;
         _currentHealth = new ReactiveProperty<int>(maxHealth);
         MaxMovementRange = movementRange;
-        _currentMovementRange = new ReactiveProperty<int>(MaxMovementRange);
         MountableType = mountableType ?? System.Array.Empty<TroopType>();
         MountableAmount = mountableAmount;
     }
 
     public void Reset()
     {
-        _currentMovementRange.Value = MaxMovementRange;
         IsAlreadyMoved = false;   
     }
 
@@ -53,16 +50,19 @@ public class Troop : ITroop
         throw new System.NotImplementedException();
     }
 
-    public void recieveDamage(int damage)
+    public void RecieveDamage(int damage)
     {
-        if (_currentHealth.Value < damage)
+        if (damage < 0)
         {
-            _currentHealth.Value = 0;
+            throw new ArgumentOutOfRangeException(nameof(damage));
         }
-        else
-        {
-            _currentHealth.Value -= damage;
-        }
+        _currentHealth.Value = Math.Max(_currentHealth.Value-damage,0);
+    }
+
+
+    public void DoneMove()
+    {
+        IsAlreadyMoved = true;
     }
 
 }
